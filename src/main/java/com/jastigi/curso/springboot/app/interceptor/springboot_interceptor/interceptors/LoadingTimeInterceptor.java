@@ -1,5 +1,7 @@
 package com.jastigi.curso.springboot.app.interceptor.springboot_interceptor.interceptors;
 
+import java.util.Random;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,12 +22,25 @@ public class LoadingTimeInterceptor implements HandlerInterceptor {
             throws Exception {
 
         logger.info("LoadingTimeInterceptor entrando Pre Handle: " + ((HandlerMethod) handler).getMethod().getName());
+
+        long start = System.currentTimeMillis();
+        request.setAttribute("startTime", start);
+
+        Random random = new Random();
+        int delay = random.nextInt(500);
+        Thread.sleep(delay);
+
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
             ModelAndView modelAndView) throws Exception {
+
+        long startTime = (Long) request.getAttribute("startTime");
+        long endTime = System.currentTimeMillis();
+        long executionTime = endTime - startTime;
+        logger.info("Tiempo transcurrido: " + executionTime + "ms");
 
         logger.info("LoadingTimeInterceptor saliendo Post Handle: " + ((HandlerMethod) handler).getMethod().getName());
 
